@@ -8,7 +8,7 @@ new Vue({
     playerStatus: "good",
     systemMessage: "",
     isPlayerDead: false,
-    activityLog: ['']
+    activityLog: [""]
   },
   methods: {
     startNewGame: function() {
@@ -18,12 +18,12 @@ new Vue({
       this.newGameTitle = "RESTART GAME";
       this.playerStatus = "good";
       this.systemMessage = "";
-      this.activityLog.push('Game started. Good Luck!');
+      this.activityLog.push("Game started. Good Luck!");
     },
     monsterAttack: function() {
-      monsterDamage = Math.round(Math.random() * 20);
+      monsterDamage = this.calculateDamage(1, 20);
       this.playerHealth -= monsterDamage;
-      this.activityLog.push('Monster attacked you for ' + monsterDamage);
+      this.activityLog.push("Monster attacked you for " + monsterDamage);
       if (this.playerHealth <= 0) {
         this.playerHealth = 0;
         this.gameIsRunning = false;
@@ -31,9 +31,9 @@ new Vue({
       }
     },
     normalAttack: function() {
-      playerDamage = Math.round(Math.random() * 10);
+      playerDamage = this.calculateDamage(1, 10);
       this.monsterHealth -= playerDamage;
-      this.activityLog.push('You\'ve attacked the monster for ' + playerDamage);
+      this.activityLog.push("You've attacked the monster for " + playerDamage);
       if (this.monsterHealth <= 0) {
         this.monsterHealth = 0;
         this.gameIsRunning = false;
@@ -44,9 +44,11 @@ new Vue({
       this.playerStatus = "good";
     },
     specialAttack: function() {
-      playerDamageSpecial = Math.round(Math.random() * 15);
+      playerDamageSpecial = this.calculateDamage(5, 15);
       this.monsterHealth -= playerDamageSpecial;
-      this.activityLog.push('Your special attack did ' + playerDamageSpecial + ' damage.');
+      this.activityLog.push(
+        "Your special attack did " + playerDamageSpecial + " damage."
+      );
       if (this.monsterHealth <= 0) {
         this.monsterHealth = 0;
         this.gameIsRunning = false;
@@ -57,18 +59,24 @@ new Vue({
       this.playerStatus = "exhausted";
     },
     healPlayer: function() {
-      healAmount = Math.round(Math.random() * 25);
+      healAmount = this.calculateDamage(10, 30);
       this.playerHealth += healAmount;
       this.playerHealth >= 100 ? (this.playerHealth = 100) : {};
       this.monsterAttack();
       this.playerStatus = "good";
-      this.activityLog.push('You healed yourself for ' + healAmount);
+      this.activityLog.push("You healed yourself for " + healAmount);
     },
     giveUp: function() {
-      this.playerHealth = 0;
-      this.gameIsRunning = false;
-      this.systemMessage = "You Gave up like a PUSSY! YOU LOST!";
+      if (!confirm("Are you sure you want to give up?")) {
+        return;
+      } else {
+        this.playerHealth = 0;
+        this.gameIsRunning = false;
+        this.systemMessage = "You gave up! YOU LOST!";
+      }
     },
-
+    calculateDamage: function(min, max) {
+      return Math.max(Math.floor(Math.random() * max) + 1, min);
+    }
   }
 });
