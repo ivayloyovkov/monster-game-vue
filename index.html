@@ -67,7 +67,7 @@
       <section class="row log" v-if="gameIsRunning">
         <div class="small-12 columns">
           <ul>
-            <li v-for="action in activityLog.slice().reverse()">{{ action }}</li>
+            <li v-for="action in activityLog" :class="{'player-turn': action.isPlayer , 'monster-turn': !action.isPlayer }">{{ action.text }}</li>
           </ul>
         </div>
       </section>

@@ -8,7 +8,7 @@ new Vue({
     playerStatus: "good",
     systemMessage: "",
     isPlayerDead: false,
-    activityLog: [""]
+    activityLog: []
   },
   methods: {
     startNewGame: function() {
@@ -18,12 +18,18 @@ new Vue({
       this.newGameTitle = "RESTART GAME";
       this.playerStatus = "good";
       this.systemMessage = "";
-      this.activityLog.push("Game started. Good Luck!");
+      this.activityLog = [];
+      this.activityLog.unshift({
+        text: "Game started. Good Luck!"
+      });
     },
     monsterAttack: function() {
       monsterDamage = this.calculateDamage(1, 20);
       this.playerHealth -= monsterDamage;
-      this.activityLog.push("Monster attacked you for " + monsterDamage);
+      this.activityLog.unshift({
+        isPlayer: false,
+        text: "Monster attacked you for " + monsterDamage
+      });
       if (this.playerHealth <= 0) {
         this.playerHealth = 0;
         this.gameIsRunning = false;
@@ -33,7 +39,10 @@ new Vue({
     normalAttack: function() {
       playerDamage = this.calculateDamage(1, 10);
       this.monsterHealth -= playerDamage;
-      this.activityLog.push("You've attacked the monster for " + playerDamage);
+      this.activityLog.unshift({
+        isPlayer: true,
+        text: "You've attacked the monster for " + playerDamage
+      });
       if (this.monsterHealth <= 0) {
         this.monsterHealth = 0;
         this.gameIsRunning = false;
@@ -46,9 +55,10 @@ new Vue({
     specialAttack: function() {
       playerDamageSpecial = this.calculateDamage(5, 15);
       this.monsterHealth -= playerDamageSpecial;
-      this.activityLog.push(
-        "Your special attack did " + playerDamageSpecial + " damage."
-      );
+      this.activityLog.unshift({
+        isPlayer: true,
+        text: "Your special attack did " + playerDamageSpecial + " damage."
+      });
       if (this.monsterHealth <= 0) {
         this.monsterHealth = 0;
         this.gameIsRunning = false;
@@ -62,9 +72,12 @@ new Vue({
       healAmount = this.calculateDamage(10, 30);
       this.playerHealth += healAmount;
       this.playerHealth >= 100 ? (this.playerHealth = 100) : {};
-      this.monsterAttack();
       this.playerStatus = "good";
-      this.activityLog.push("You healed yourself for " + healAmount);
+      this.activityLog.unshift({
+        isPlayer: true,
+        text: "You healed yourself for " + healAmount
+      });
+      this.monsterAttack();
     },
     giveUp: function() {
       if (!confirm("Are you sure you want to give up?")) {
